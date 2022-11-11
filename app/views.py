@@ -1,15 +1,9 @@
 import json
-from math import fabs
-
 from flask import Blueprint, render_template, current_app as app, abort
-
-from app import make_redis
+from app import redis_cache as r
 
 simple_page = Blueprint('', __name__,
                         template_folder='templates')
-
-r = make_redis(app)
-
 
 @simple_page.route("/")
 def index():
@@ -32,7 +26,6 @@ def symbol_price(exchange, symbol_A, symbol_B):
     # system not symbol data
     if not exist:
         abort(404)
-
     data = {"data": symbol_data, "exchange":exchange.upper()}
     return render_template("price.html", data=data)
 

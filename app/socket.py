@@ -3,10 +3,7 @@ import time
 
 from flask_socketio import Namespace, emit
 from flask import current_app as app
-from app import make_redis
-
-r = make_redis(app)
-
+from app import redis_cache as r
 
 class MyCryptoPriceNamespace(Namespace):
     def on_connect(self):

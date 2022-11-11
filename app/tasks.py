@@ -2,14 +2,10 @@ import json
 import logging
 
 import ccxt
-from app.extensions import celery
-from app import make_redis
+from app import celery, redis_cache as redis
 from flask import current_app as app
 
 logger = logging.getLogger('app.celery')
-
-redis = make_redis(app)
-
 
 @celery.task
 def every_second_task():
