@@ -1,31 +1,32 @@
 import os
 from dotenv import load_dotenv
 
+
 class Config:
-    SECRET_KEY = os.getenv('SECRET_KEY')
+    SECRET_KEY = os.getenv("SECRET_KEY")
 
 
 class developmentConfig(Config):
-    ENV = 'development'
+    ENV = "development"
     DEBUG = True
     REDIS_HOST = "localhost"
     REDIS_PORT = 6379
-    CELERY_BROKER_URL = f'redis://{REDIS_HOST}:{REDIS_PORT}/0'
-    CELERY_RESULT_BACKEND = f'redis://{REDIS_HOST}:{REDIS_PORT}/1'
+    CELERY_BROKER_URL = f"redis://{REDIS_HOST}:{REDIS_PORT}/0"
+    CELERY_RESULT_BACKEND = f"redis://{REDIS_HOST}:{REDIS_PORT}/1"
 
 
 class productionConfig(Config):
     load_dotenv()
-    ENV = 'production'
+    ENV = "production"
     DEBUG = False
-    REDIS_HOST = os.getenv('REDIS_HOST')
-    REDIS_PORT = os.getenv('REDIS_PORT')
-    CELERY_BROKER_URL = f'redis://{REDIS_HOST}:{REDIS_PORT}/0'
-    CELERY_RESULT_BACKEND = f'redis://{REDIS_HOST}:{REDIS_PORT}/1'
+    REDIS_HOST = os.getenv("REDIS_HOST")
+    REDIS_PORT = os.getenv("REDIS_PORT")
+    CELERY_BROKER_URL = f"redis://{REDIS_HOST}:{REDIS_PORT}/0"
+    CELERY_RESULT_BACKEND = f"redis://{REDIS_HOST}:{REDIS_PORT}/1"
 
 
 class testConfig(Config):
-    ENV = 'test'
+    ENV = "test"
     TESTING = True
     REDIS_HOST = None
     REDIS_PORT = 6379
@@ -36,5 +37,5 @@ class testConfig(Config):
 config = {
     "development": developmentConfig,
     "production": productionConfig,
-    "test": testConfig
+    "test": testConfig,
 }

@@ -5,16 +5,17 @@ from flask_socketio import Namespace, emit
 from flask import current_app as app
 from app import redis_cache as r
 
+
 class MyCryptoPriceNamespace(Namespace):
     def on_connect(self):
-        app.logger.info('connect.')
-        exchange_list = r.keys('CRYPTO_*')
+        app.logger.info("connect.")
+        exchange_list = r.keys("CRYPTO_*")
         app.logger.info(exchange_list)
         emit("get_exchange", [x.decode() for x in exchange_list])
         self.status = False
 
     def on_disconnect(self):
-        app.logger.info('disconnect.')
+        app.logger.info("disconnect.")
         self.status = False
 
     def on_get_symbol(self, data):
@@ -27,10 +28,10 @@ class MyCryptoPriceNamespace(Namespace):
 
     def on_get_symbol_data(self, data):
         self.status = True
-        self.exchange = data['exchange'].upper()
-        self.symbol = data['symbol'].upper()
+        self.exchange = data["exchange"].upper()
+        self.symbol = data["symbol"].upper()
         while self.status:
-            queryset = r.get(f'{self.exchange}')
+            queryset = r.get(f"{self.exchange}")
             result = json.loads(queryset)
             emit("get_symbol_data", result[self.symbol])
             time.sleep(10)
