@@ -1,19 +1,22 @@
 from logging.config import dictConfig
 from flask import Flask, render_template
 from flask_socketio import SocketIO
+from flask_caching import Cache
 from pathlib import Path
 from celery import Celery
 from app.settings import config
 
 import os
 import redis
-import eventlet
 import logging
+
+import eventlet
 
 eventlet.monkey_patch()
 socketio = SocketIO()
 celery = Celery(__name__)
-redis_cache = redis.StrictRedis()
+cache = Cache(config={"CACHE_TYPE": "RedisCache"})
+
 
 INIT_LOGGING = "Init |"
 
@@ -48,16 +51,6 @@ def check_logs_folder(LOGS_FOLDER):
         logging.info(f"{INIT_LOGGING} CREATE {LOGS_FOLDER} FOLDER !!!")
     else:
         logging.info(f"{INIT_LOGGING} EXISTED LOGS FOLDER.")
-
-
-def make_redis(app):
-    REDIS_HOST = app.config["REDIS_HOST"]
-    REDIS_PORT = app.config["REDIS_PORT"]
-    redis_cache = redis.Redis(host=REDIS_HOST, port=REDIS_PORT)
-    app.logger.info(
-        f"{INIT_LOGGING} LOADING REDIS Host = {REDIS_HOST}, Port = {REDIS_PORT}."
-    )
-    return app
 
 
 def create_app(env):
@@ -102,19 +95,19 @@ def create_app(env):
     app.logger.info(f"{INIT_LOGGING} LOADING ENV = {env}")
 
     with app.app_context():
-        # redis
-        make_redis(app)
         # celery
         make_celery(app)
         from app import tasks
 
+        # Caching
+        cache.init_app(app)
         # blueprint
         from app.views import simple_page
 
-        app.register_blueprint(simple_page)
         # error page handler
         app.register_error_handler(404, page_not_found)
         app.register_error_handler(500, internal_server_error)
+        app.register_blueprint(simple_page)
         # socket_io
         from app.socket import MyCryptoPriceNamespace
 

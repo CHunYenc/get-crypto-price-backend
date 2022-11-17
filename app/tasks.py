@@ -2,7 +2,7 @@ import json
 import logging
 
 import ccxt
-from app import celery, redis_cache as redis
+from app import celery, cache
 from flask import current_app as app
 
 logger = logging.getLogger("app.celery")
@@ -17,18 +17,16 @@ def every_second_task():
 def get_binance_tickers():
     data = ccxt.binance().fetch_tickers()
     NAME = str.upper("crypto_binance")
-    redis.set(NAME, json.dumps(data))
+    cache.set(NAME, json.dumps(data))
     logger.info("get binance tickers")
-    redis.close()
 
 
 @celery.task
 def get_cryptocom_tickers():
     data = ccxt.cryptocom().fetch_tickers()
     NAME = str.upper("crypto_cryptocom")
-    redis.set(NAME, json.dumps(data))
+    cache.set(NAME, json.dumps(data))
     logger.info("get crypto tickers")
-    redis.close()
 
 
 @celery.on_after_configure.connect

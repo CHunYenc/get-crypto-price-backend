@@ -13,6 +13,7 @@ class developmentConfig(Config):
     REDIS_PORT = 6379
     CELERY_BROKER_URL = f"redis://{REDIS_HOST}:{REDIS_PORT}/0"
     CELERY_RESULT_BACKEND = f"redis://{REDIS_HOST}:{REDIS_PORT}/1"
+    CACHE_REDIS_URL = f"redis://{REDIS_HOST}:{REDIS_PORT}"
 
 
 class productionConfig(Config):
@@ -23,6 +24,7 @@ class productionConfig(Config):
     REDIS_PORT = os.getenv("REDIS_PORT")
     CELERY_BROKER_URL = f"redis://{REDIS_HOST}:{REDIS_PORT}/0"
     CELERY_RESULT_BACKEND = f"redis://{REDIS_HOST}:{REDIS_PORT}/1"
+    CACHE_REDIS_URL = f"redis://{REDIS_HOST}:{REDIS_PORT}"
 
 
 class testConfig(Config):
@@ -32,6 +34,7 @@ class testConfig(Config):
     REDIS_PORT = 6379
     CELERY_BROKER_URL = None
     CELERY_RESULT_BACKEND = None
+    CACHE_REDIS_URL = f"redis://{REDIS_HOST}:{REDIS_PORT}"
 
 
 config = {

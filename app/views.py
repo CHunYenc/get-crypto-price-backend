@@ -1,6 +1,6 @@
 import json
 from flask import Blueprint, render_template, current_app as app, abort
-from app import redis_cache as r
+from app import cache
 
 simple_page = Blueprint("", __name__, template_folder="templates")
 
@@ -15,7 +15,7 @@ def symbol_price(exchange, symbol_A, symbol_B):
     c_exchange = str.upper(f"CRYPTO_{exchange}")
     symbol_A = str.upper(symbol_A)
     symbol_B = str.upper(symbol_B)
-    r_data = r.get(f"{c_exchange}")
+    r_data = cache.get(f"{c_exchange}")
     # system not exchange data
     if r_data is None:
         abort(404)
