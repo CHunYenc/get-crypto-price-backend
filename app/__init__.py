@@ -30,8 +30,16 @@ def internal_server_error(e):
 
 
 def make_celery(app):
-    celery.conf.result_backend = app.config["CELERY_RESULT_BACKEND"]
-    celery.conf.broker_url = app.config["CELERY_BROKER_URL"]
+    celery.conf.result_backend = f"{app.config['CELERY_RESULT_BACKEND']}/2"
+    celery.conf.broker_url = f"{app.config['CELERY_BROKER_URL']}/1"
+    # TODO Use SSL
+    # if 'rediss://' in app.config['REDIS_URL']:
+    #     celery.conf.broker_use_ssl = {
+    #         'ssl_cert_reqs': ssl.CERT_REQUIRED
+    #     }
+    #     celery.conf.redis_backend_use_ssl = {
+    #         'ssl_cert_reqs': ssl.CERT_REQUIRED
+    #     }
     celery.conf.update(app.config)
 
     class ContextTask(celery.Task):
@@ -115,7 +123,7 @@ def create_app(env):
         socketio.init_app(
             app,
             cors_allowed_origins="*",
-            message_queue=f"redis://{app.config['REDIS_HOST']}:{app.config['REDIS_PORT']}",
+            message_queue=f"{app.config['REDIS_URL']}/3",
             async_mode="eventlet",
             engineio_logger=True,
         )
