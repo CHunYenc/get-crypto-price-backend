@@ -11,11 +11,12 @@ RUN apt-get update \
     libpq-dev
     # postgresql-client \
     # postgresql-client-common
-
+    
 RUN pip install --upgrade pip
 RUN pip install --no-cache-dir -r requirements.txt
 
-CMD ["python","wsgi.py"]
+CMD ["gunicorn","wsgi:app"]
+
 # uwsgi
 # CMD ["uwsgi", "app.ini"] 
 
