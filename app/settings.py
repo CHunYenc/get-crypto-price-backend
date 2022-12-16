@@ -1,20 +1,21 @@
 import os
-from dotenv import load_dotenv
 
 
 class Config:
-    load_dotenv()
     SECRET_KEY = os.getenv("SECRET_KEY")
     REDIS_URL = os.getenv("REDIS_URL", "redis://localhost:6379")
     CACHE_REDIS_URL = REDIS_URL
+
 
 class developmentConfig(Config):
     ENV = "development"
     DEBUG = True
 
+
 class productionConfig(Config):
     ENV = "production"
     DEBUG = False
+
 
 class testConfig(Config):
     ENV = "test"
