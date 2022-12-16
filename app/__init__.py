@@ -2,20 +2,19 @@ from logging.config import dictConfig
 from flask import Flask, render_template
 from flask_socketio import SocketIO
 from flask_caching import Cache
+from flask_apscheduler import APScheduler
 from pathlib import Path
-from celery import Celery
 from app.settings import config
 
 import os
 import redis
 import logging
-
 import eventlet
 
 eventlet.monkey_patch()
 socketio = SocketIO()
-celery = Celery(__name__)
 cache = Cache(config={"CACHE_TYPE": "RedisCache"})
+scheduler = APScheduler()
 
 
 INIT_LOGGING = "Init |"
@@ -29,23 +28,10 @@ def internal_server_error(e):
     return render_template("500.html"), 500
 
 
-def make_celery(app):
-    celery.conf.result_backend = f"{app.config['REDIS_URL']}/2"
-    celery.conf.broker_url = f"{app.config['REDIS_URL']}/1"
-    celery.conf.update(app.config)
-
-    class ContextTask(celery.Task):
-        def __call__(self, *args, **kwargs):
-            with app.app_context():
-                return self.run(*args, **kwargs)
-
-    celery.Task = ContextTask
-    return app
-
-
 def check_logs_folder(LOGS_FOLDER):
     """ckeck app/logs folder"""
-    logging.info(f"{INIT_LOGGING} LOGS FOLDER EXIST ? {os.path.isdir(LOGS_FOLDER)}")
+    logging.info(
+        f"{INIT_LOGGING} LOGS FOLDER EXIST ? {os.path.isdir(LOGS_FOLDER)}")
     if not os.path.isdir(LOGS_FOLDER):
         os.makedirs(LOGS_FOLDER)
         logging.info(f"{INIT_LOGGING} CREATE {LOGS_FOLDER} FOLDER !!!")
@@ -76,41 +62,31 @@ def create_app(env):
                     "class": "logging.handlers.TimedRotatingFileHandler",
                     "filename": os.path.join(LOGS_DIR, "app.log"),
                     "formatter": "default",
-                },
-                "celery": {
-                    "level": "INFO",
-                    "class": "logging.handlers.TimedRotatingFileHandler",
-                    "filename": os.path.join(LOGS_DIR, "celery.log"),
-                    "formatter": "default",
-                },
+                }
             },
             "loggers": {
-                "": {"level": "INFO", "handlers": ["flask", "default"]},
-                "app.celery": {"handlers": ["celery", "default"], "level": "INFO"},
-            },
+                "": {"level": "INFO", "handlers": ["flask", "default"]}},
         }
     )
     app = Flask(__name__)
     app.config.from_object(config[env])
     app.logger.info(f"{INIT_LOGGING} LOADING ENV = {env}")
+    # APScheduler
+    scheduler.init_app(app)
 
     with app.app_context():
-        # celery
-        make_celery(app)
-        from app import tasks
-
         # Caching
         cache.init_app(app)
+        from . import tasks  # noqa: F401
+        scheduler.start()
         # blueprint
         from app.views import simple_page
-
         # error page handler
         app.register_error_handler(404, page_not_found)
         app.register_error_handler(500, internal_server_error)
         app.register_blueprint(simple_page)
         # socket_io
         from app.socket import MyCryptoPriceNamespace
-
         socketio.on_namespace(MyCryptoPriceNamespace("/"))
         socketio.init_app(
             app,
