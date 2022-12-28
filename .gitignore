@@ -7,7 +7,6 @@ __pycache__/
 celerybeat-schedule
 .idea/
 secets.txt
-.vscode/
 logs/
 
 # Online
@@ -16,3 +15,5 @@ logs/
 **.pid
 .env
 .venv
+.v39
+**.sqlite3

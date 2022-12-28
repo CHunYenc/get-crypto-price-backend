@@ -1,1 +1,0 @@
-uwsgi app & celery -A celery_worker.celery worker --pool=solo --loglevel=info -B
