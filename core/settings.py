@@ -208,5 +208,10 @@ CELERY_ACCEPT_CONTENT = ['application/json']
 CELERY_SERIALIZER = 'json'
 CELERY_RESULT_SERIALIZER = 'json'
 CELERY_BEAT_SCHEDULER = 'django_celery_beat.schedulers:DatabaseScheduler'
-CELERY_IMPORTS = ["backend.tasks"]
-CELERY_BEAT_SCHEDULE = {}
+CELERY_IMPORTS = ["core.tasks"]
+CELERY_BEAT_SCHEDULE = {
+    "system-get-pricing": {
+        "task": "system-get-pricing",
+        "schedule": 10.0
+    }
+}
