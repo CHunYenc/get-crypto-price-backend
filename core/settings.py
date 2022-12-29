@@ -58,10 +58,12 @@ MIDDLEWARE = [
 
 ROOT_URLCONF = 'core.urls'
 
+print(BASE_DIR)
+
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [os.path.join(BASE_DIR, 'templates')],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -201,8 +203,8 @@ LOGGING = {
 }
 
 # CELERY STUFF
-CELERY_BROKER_URL = f"{os.getenv('REDIS_URL','redis://localhost:6379')}/0"
-CELERY_RESULT_BACKEND = f"{os.getenv('REDIS_URL','redis://localhost:6379')}/1"
+CELERY_BROKER_URL = f"{os.getenv('REDIS_URL','redis://localhost:6379')}/1"
+CELERY_RESULT_BACKEND = f"{os.getenv('REDIS_URL','redis://localhost:6379')}/0"
 CELERY_TIMEZONE = "UTC"
 CELERY_ACCEPT_CONTENT = ['application/json']
 CELERY_SERIALIZER = 'json'
