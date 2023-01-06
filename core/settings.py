@@ -58,8 +58,6 @@ MIDDLEWARE = [
 
 ROOT_URLCONF = 'core.urls'
 
-print(BASE_DIR)
-
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
@@ -83,13 +81,19 @@ WSGI_APPLICATION = 'core.wsgi.application'
 # https://docs.djangoproject.com/en/4.1/ref/settings/#databases
 
 DATABASES = {
+    # postgresql
+    # 'default': {
+    #     'ENGINE': 'django.db.backends.postgresql',
+    #     'NAME': os.getenv("DB_NAME", "default"),
+    #     'USER': os.getenv("DB_USER", "default"),
+    #     'PASSWORD': os.getenv("DB_PASSWORD", "default"),
+    #     'HOST': os.getenv("DB_HOST", "default"),
+    #     'PORT': os.getenv("DB_PORT", "default"),
+    # }
+    # sqlite
     'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': os.getenv("DB_NAME", "default"),
-        'USER': os.getenv("DB_USER", "default"),
-        'PASSWORD': os.getenv("DB_PASSWORD", "default"),
-        'HOST': os.getenv("DB_HOST", "default"),
-        'PORT': os.getenv("DB_PORT", "default"),
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': 'mydatabase',
     }
 }
 

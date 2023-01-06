@@ -15,9 +15,10 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
-from . import views
+from apps.pricing.views import get_pricing
+
+handler404 = 'apps.pricing.views.handler404'
 
 urlpatterns = [
-    path('', views.index),
-    path('<str:exchange>/<str:symbol_a>/<str:symbol_b>/', views.get_pricing)
+    path('<str:exchange>/<str:symbol_a>/<str:symbol_b>', get_pricing)
 ]
