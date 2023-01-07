@@ -11,10 +11,9 @@ https://docs.djangoproject.com/en/4.1/ref/settings/
 """
 
 import os
+import variables
 from pathlib import Path
-from dotenv import load_dotenv
 
-load_dotenv()  # take environment variables from .env.
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -85,11 +84,11 @@ DATABASES = {
     # postgresql
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': os.getenv("DB_NAME", "default"),
-        'USER': os.getenv("DB_USER", "default"),
-        'PASSWORD': os.getenv("DB_PASSWORD", "default"),
-        'HOST': os.getenv("DB_HOST", "default"),
-        'PORT': os.getenv("DB_PORT", "default"),
+        'NAME': variables.DB_NAME,
+        'USER': variables.DB_USER,
+        'PASSWORD': variables.DB_PASSWORD,
+        'HOST': variables.DB_HOST,
+        'PORT': variables.DB_PORT
     }
     # sqlite
     # 'default': {
@@ -144,7 +143,7 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 CACHES = {
     "default": {
         "BACKEND": "django_redis.cache.RedisCache",
-        "LOCATION": os.getenv("REDUS_URL", "redis://localhost:6379"),
+        "LOCATION": variables.REDIS_URL,
         "OPTIONS": {
             "CLIENT_CLASS": "django_redis.client.DefaultClient",
         }
@@ -208,8 +207,8 @@ LOGGING = {
 }
 
 # CELERY STUFF
-CELERY_BROKER_URL = f"{os.getenv('REDIS_URL','redis://localhost:6379')}/1"
-CELERY_RESULT_BACKEND = f"{os.getenv('REDIS_URL','redis://localhost:6379')}/0"
+CELERY_BROKER_URL = f"{variables.REDIS_URL}/1"
+CELERY_RESULT_BACKEND = f"{variables.REDIS_URL}/0"
 CELERY_TIMEZONE = "UTC"
 CELERY_ACCEPT_CONTENT = ['application/json']
 CELERY_SERIALIZER = 'json'
