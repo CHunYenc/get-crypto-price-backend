@@ -34,6 +34,7 @@ ALLOWED_HOSTS = ['*']
 # Application definition
 
 INSTALLED_APPS = [
+    'daphne',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -82,19 +83,19 @@ WSGI_APPLICATION = 'core.wsgi.application'
 
 DATABASES = {
     # postgresql
-    # 'default': {
-    #     'ENGINE': 'django.db.backends.postgresql',
-    #     'NAME': os.getenv("DB_NAME", "default"),
-    #     'USER': os.getenv("DB_USER", "default"),
-    #     'PASSWORD': os.getenv("DB_PASSWORD", "default"),
-    #     'HOST': os.getenv("DB_HOST", "default"),
-    #     'PORT': os.getenv("DB_PORT", "default"),
-    # }
-    # sqlite
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': 'mydatabase',
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': os.getenv("DB_NAME", "default"),
+        'USER': os.getenv("DB_USER", "default"),
+        'PASSWORD': os.getenv("DB_PASSWORD", "default"),
+        'HOST': os.getenv("DB_HOST", "default"),
+        'PORT': os.getenv("DB_PORT", "default"),
     }
+    # sqlite
+    # 'default': {
+    #     'ENGINE': 'django.db.backends.sqlite3',
+    #     'NAME': 'mydatabase',
+    # }
 }
 
 
@@ -191,7 +192,7 @@ LOGGING = {
         },
     },
     'loggers': {
-        'django.server': {
+        '': {
             'level': 'INFO',
             'handlers': ['console', 'default']
         },
@@ -221,3 +222,5 @@ CELERY_BEAT_SCHEDULE = {
         "schedule": 10.0
     }
 }
+
+ASGI_APPLICATION = "core.asgi.application"
