@@ -8,4 +8,4 @@ DB_NAME = os.getenv("DB_NAME", "default"),
 DB_USER = os.getenv("DB_USER", "default"),
 DB_PASSWORD = os.getenv("DB_PASSWORD", "default"),
 DB_HOST = os.getenv("DB_HOST", "default"),
-DB_PORT = os.getenv("DB_PORT", "default"),
+DB_PORT = int(os.getenv("DB_PORT", "default"))
