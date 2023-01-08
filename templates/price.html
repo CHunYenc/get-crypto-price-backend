@@ -28,14 +28,7 @@ ERROR
   <dt>24h - 價格漲跌幅度</dt>
   <!-- prettier-ignore -->
   <dd id="priceChangePercent">
-  {% if exchange == 'BINANCE' %}
     {{ data.percentage }}
-  {% elif exchange == "CRYPTOCOM" %}
-    {{ ((data.data.info.a|float - (data.data.info.c|float|abs + data.info.a|float)) /
-    (data.data.info.c|float|abs + data.info.a|float) * 100)|round(2, 'floor') }}
-  {% else %}
-    ERROR
-  {% endif %}
   </dd>
   <dt>24h - 目前價格</dt>
   <dd id="lastPrice">
