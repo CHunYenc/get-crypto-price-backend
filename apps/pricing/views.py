@@ -6,12 +6,17 @@ from django.http.response import Http404
 from django.core.cache import cache
 
 # Create your views here.
+from core import settings
 
 
 def handler404(request, exception):
     # we add the path to the the 404.html file
     # here. The name of our HTML file is 404.html
     return render(request, '404.html')
+
+
+def index(request):
+    return render(request, 'index.html', {'DEBUG': settings.DEBUG})
 
 
 def get_pricing(request, exchange, symbol_a, symbol_b):
@@ -47,3 +52,7 @@ def get_pricing(request, exchange, symbol_a, symbol_b):
     if symbol_data['percentage'] is None:
         symbol_data['percentage'] = float(symbol_data['info']['c']) * 100
     return render(request, 'price.html', context={"data": symbol_data, "exchange": exchange.upper()})
+
+
+def get_websocket_pricing(request):
+    return render(request, 'price_ws.html')

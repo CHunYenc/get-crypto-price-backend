@@ -13,12 +13,17 @@ Including another URLconf
     1. Import the include() function: from django.urls import include, path
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
+from django.conf import settings
 from django.contrib import admin
+from django.templatetags.static import static
 from django.urls import path, include
-from apps.pricing.views import get_pricing
+from apps.pricing.views import get_pricing, get_websocket_pricing, index
 
 handler404 = 'apps.pricing.views.handler404'
 
 urlpatterns = [
-    path('<str:exchange>/<str:symbol_a>/<str:symbol_b>', get_pricing)
+    path('', index),
+    path('<str:exchange>/<str:symbol_a>/<str:symbol_b>', get_pricing),
+    # websocket
+    path('pricing/', get_websocket_pricing),
 ]
