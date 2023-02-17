@@ -71,7 +71,10 @@
         };
       },
       created() {
-        this.socket = new WebSocket(`wss://${window.location.host}/ws/`);
+        let protocol = 'ws'
+        if (window.location.protocol === 'https:') protocol = "wss"
+        console.log(`Protocol is ${window.location.protocol}, so Websocket protocol is ${protocol}.`)
+        this.socket = new WebSocket(`${protocol}://${window.location.host}/ws/`);
         this.socket.addEventListener('open', this.handleOpen);
         this.socket.addEventListener('message', this.handleMessage);
         this.socket.addEventListener('close', this.handleClose);
