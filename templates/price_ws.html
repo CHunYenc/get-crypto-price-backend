@@ -1,131 +1,128 @@
 {% extends "base/layout.html" %}
+<!-- title -->
 {% block title %} Socket {% endblock title %}
-
+<!-- content -->
 {% block content %}
-  {{ block.super }}
-  <div id="socket">
-    <el-main>
-      <el-row>
-        <el-col :span="12">
-          <el-select
-            v-model="select_exchange"
-            placeholder="請選擇交易所"
-            @change="select_exchange_method"
-            :disabled="select_exchange_disabled"
-          >
-            <el-option
-              v-for="item in select_exchange_items"
-              :key="item"
-              :label="item"
-              :value="item"
-            >
-            </el-option>
-          </el-select>
-        </el-col>
-        <el-col :span="12">
-          <el-select
-            v-model="select_symbol"
-            filterable
-            placeholder="請選擇交易對"
-            @change="select_data"
-            :disabled="select_symbol_disabled"
-          >
-            <el-option
-              v-for="item in select_symbol_items"
-              :key="item"
-              :label="item"
-              :value="item"
-            >
-            </el-option>
-          </el-select>
-        </el-col>
-      </el-row>
-      <el-row> [[symbol_data]]</el-row>
-    </el-main>
-  </div>
+<!-- extends -->
+{{ block.super }}
+<div id="socket">
+  <el-main v-loading="loading">
+    <el-row>
+      <el-col :span="12">
+        <el-select v-model="select_exchange" placeholder="請選擇交易所" @change="select_exchange_method">
+          <el-option v-for="item in select_exchange_items" :key="item" :label="item" :value="item"> </el-option>
+        </el-select>
+      </el-col>
+      <el-col :span="12">
+        <el-select v-model="select_symbol" filterable placeholder="請選擇交易對" @change="select_data">
+          <el-option v-for="item in select_symbol_items" :key="item" :label="item" :value="item"> </el-option>
+        </el-select>
+      </el-col>
+    </el-row>
+    <el-row> [[symbol_data]]</el-row>
+  </el-main>
+</div>
 {% endblock content %}
-
-{% block js %}
-  {{ block.super }}
-  <script>
-    new Vue({
-      el: '#socket',
-      delimiters: ['[[', ']]'],
-      data() {
-        return {
-          text: 'Hello Vue2',
-          socket: null,
-          // select exchange
-          select_exchange_items: [],
-          select_exchange: null,
-          select_exchange_loading: true,
-          select_exchange_disabled: true,
-          // select symbol
-          select_symbol_items: [],
-          select_symbol: null,
-          select_symbol_loading: true,
-          select_symbol_disabled: true,
-          // exchange and symbol data
-          symbol_data: {},
-          current_price: null
-        };
+<!-- javascript -->
+{% block js %} {{ block.super }}
+<script>
+  new Vue({
+    el: '#socket',
+    delimiters: ['[[', ']]'],
+    data() {
+      return {
+        text: 'Hello Vue2',
+        socket: null,
+        loading: true,
+        // select exchange
+        select_exchange_items: [],
+        select_exchange: null,
+        // select symbol
+        select_symbol_items: [],
+        select_symbol: null,
+        update_symbol: false,
+        // exchange and symbol data
+        symbol_data: {},
+        current_price: null
+      };
+    },
+    created() {
+      let protocol = 'ws';
+      if (window.location.protocol === 'https:') protocol = 'wss';
+      console.log(`Protocol is ${window.location.protocol}, so Websocket protocol is ${protocol}.`);
+      this.socket = new WebSocket(`${protocol}://${window.location.host}/ws/`);
+      this.socket.addEventListener('open', this.handleOpen);
+      this.socket.addEventListener('message', this.handleMessage);
+      this.socket.addEventListener('close', this.handleClose);
+      this.socket.addEventListener('error', this.handleError);
+      this.socket.addEventListener('beforeunload', this.handleClose);
+    },
+    methods: {
+      handleOpen(event) {
+        console.log('WebSocket connection opened');
+        this.select_exchange_disabled = false;
       },
-      created() {
-        let protocol = 'ws'
-        if (window.location.protocol === 'https:') protocol = "wss"
-        console.log(`Protocol is ${window.location.protocol}, so Websocket protocol is ${protocol}.`)
-        this.socket = new WebSocket(`${protocol}://${window.location.host}/ws/`);
-        this.socket.addEventListener('open', this.handleOpen);
-        this.socket.addEventListener('message', this.handleMessage);
-        this.socket.addEventListener('close', this.handleClose);
-        this.socket.addEventListener('error', this.handleError);
+      handleMessage(event) {
+        const message = JSON.parse(event.data);
+        let message_type = message.type;
+        // console.log(message);
+        if (message_type === 'exchange_list') {
+          this.select_exchange_items = message.data;
+          console.log('get exchange list');
+          this.closeLoading();
+        }
+        if (message_type === 'symbol_list') {
+          // 更改 loading 狀態
+          // 收到 symbol_list
+          // 1. 清除 select_symbol
+          // 2. 清除 select_symbol_items
+          this.select_symbol = this.$options.data().select_symbol;
+          this.select_symbol_items = this.$options.data().select_symbol_items;
+          // 將新的 select_symbol_items 進行顯示
+          this.select_symbol_items = message.data;
+          console.log('get symbol list');
+          this.closeLoading();
+        }
+        if (message_type === 'symbol_data') {
+          this.symbol_data = message.data;
+          if (this.select_exchange.includes('BINANCE')) this.current_price = this.symbol_data.info.lastPrice;
+          if (this.select_exchange.includes('CRYPTOCOM')) this.current_price = this.symbol_data.info.a;
+          document.title = `${parseFloat(this.current_price).toFixed(6)} | ${
+            this.select_symbol
+          } | ${this.select_exchange.replace('CRYPTO_', '')}`;
+          console.log('get symbol data.');
+          this.closeLoading();
+        }
       },
-      methods: {
-        handleOpen(event) {
-          console.log('WebSocket connection opened');
-          this.select_exchange_disabled = false;
-        },
-        handleMessage(event) {
-          const message = JSON.parse(event.data);
-          let message_type = message.type;
-          // console.log(message);
-          if (message_type === 'exchange_list') {
-            this.select_exchange_items = message.data;
-          }
-          if (message_type === 'symbol_list') {
-            this.select_symbol_disabled = false;
-            this.select_symbol_items = message.data;
-          }
-          if (message_type === 'symbol_data') {
-            this.symbol_data = message.data;
-            if (this.select_exchange.includes('BINANCE'))
-              this.current_price = this.symbol_data.info.lastPrice;
-            if (this.select_exchange.includes('CRYPTOCOM'))
-              this.current_price = this.symbol_data.info.a;
-            document.title = `${parseFloat(this.current_price).toFixed(6)} | ${
-              this.select_symbol
-            } | ${this.select_exchange.replace('CRYPTO_', '')}`;
-          }
-        },
-        handleClose(event) {
-          console.log('WebSocket connection closed');
-        },
-        handleError(event) {
-          console.error('WebSocket error:', event);
-        },
-        select_exchange_method() {
-          this.socket.send(JSON.stringify({ type: 'exchange_data', data: this.select_exchange }));
-        },
-        select_data() {
-          console.log(
-            `select exchange is ${this.select_exchange}, symbol is ${this.select_symbol}.`
-          );
-          this.socket.send(JSON.stringify({
+      handleClose(event) {
+        console.log('WebSocket connection closed');
+        this.socket.close();
+      },
+      handleError(event) {
+        console.error('WebSocket error:', event);
+      },
+      select_exchange_method() {
+        this.socket.send(JSON.stringify({ type: 'exchange_data', data: this.select_exchange }));
+        this.openLoading();
+      },
+      // 送出選擇後的交易所及交易對
+      select_data() {
+        console.log(`select exchange is ${this.select_exchange}, symbol is ${this.select_symbol}.`);
+        this.socket.send(
+          JSON.stringify({
             type: 'symbol_data',
             data: { exchange_data: this.select_exchange, symbol_data: this.select_symbol }
-          }));
-        }
+          })
+        );
+        this.openLoading();
+      },
+      openLoading() {
+        return (this.loading = true);
+      },
+      closeLoading() {
+        return (this.loading = false);
       }
-    });
-  </script>
+    }
+  });
+</script>
 {% endblock js %}
