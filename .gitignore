@@ -1,13 +1,11 @@
 # virtualenv folder
 venv/
-variables.py
 config.py
 pgdata/
 __pycache__/
 celerybeat-schedule
 .idea/
 secets.txt
-.vscode/
 logs/
 
 # Online
@@ -16,3 +14,7 @@ logs/
 **.pid
 .env
 .venv
+.v39
+**.sqlite3
+mydatabase
+staticfiles

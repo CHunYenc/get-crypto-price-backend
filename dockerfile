@@ -8,10 +8,10 @@ RUN apt-get update \
     && apt-get install -y --no-install-recommends \
     build-essential \
     freetds-dev \
-    libpq-dev
-    # postgresql-client \
-    # postgresql-client-common
-    
+    libpq-dev \
+    postgresql-client \
+    postgresql-client-common
+
 RUN pip install --upgrade pip
 RUN pip install --no-cache-dir -r requirements.txt
 
