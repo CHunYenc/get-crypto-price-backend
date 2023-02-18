@@ -21,12 +21,12 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/4.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-!!+u734z7)u48r=kmqz&bj0it8%(ejx_&-7p+n*ev8+a4fa*l5'
+SECRET_KEY = variables.SECRET_KEY
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = variables.DEBUG
 
-ALLOWED_HOSTS = ['*']
+ALLOWED_HOSTS = variables.ALLOWED_HOSTS
 
 # Application definition
 
@@ -79,15 +79,7 @@ WSGI_APPLICATION = 'core.wsgi.application'
 # https://docs.djangoproject.com/en/4.1/ref/settings/#databases
 
 DATABASES = {
-    # postgresql
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': variables.DB_NAME,
-        'USER': variables.DB_USER,
-        'PASSWORD': variables.DB_PASSWORD,
-        'HOST': variables.DB_HOST,
-        'PORT': variables.DB_PORT
-    }
+    'default': variables.DATABASE
 }
 
 # Password validation
@@ -132,13 +124,7 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 # django-redis
 CACHES = {
-    "default": {
-        "BACKEND": "django_redis.cache.RedisCache",
-        "LOCATION": variables.REDIS_URL,
-        "OPTIONS": {
-            "CLIENT_CLASS": "django_redis.client.DefaultClient",
-        }
-    }
+    "default": variables.CACHE
 }
 
 # logging
@@ -197,8 +183,8 @@ LOGGING = {
 }
 
 # CELERY STUFF
-CELERY_BROKER_URL = f"{variables.REDIS_URL}/1"
-CELERY_RESULT_BACKEND = f"{variables.REDIS_URL}/0"
+CELERY_BROKER_URL = f"{variables.CACHE['LOCATION']}/1"
+CELERY_RESULT_BACKEND = f"{variables.CACHE['LOCATION']}/0"
 CELERY_TIMEZONE = "UTC"
 CELERY_ACCEPT_CONTENT = ['application/json']
 CELERY_SERIALIZER = 'json'

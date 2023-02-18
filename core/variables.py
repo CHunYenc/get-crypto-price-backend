@@ -1,11 +1,17 @@
+import environ
 import os
-from dotenv import load_dotenv
 
-load_dotenv()  # take environment variables from .env.
+# Set the project base directory
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
-REDIS_URL = os.getenv('REDIS_URL', 'redis://localhost:6379')
-DB_NAME = os.getenv("DB_NAME", "default")
-DB_USER = os.getenv("DB_USER", "default")
-DB_PASSWORD = os.getenv("DB_PASSWORD", "default")
-DB_HOST = os.getenv("DB_HOST", "default")
-DB_PORT = int(os.getenv("DB_PORT", "default"))
+# Create .env file on /get-crypto-price-backend/.env
+# See https://django-environ.readthedocs.io/en/latest/quickstart.html
+env = environ.Env()
+environ.Env.read_env(os.path.join(BASE_DIR, '.env'))
+
+# Used django-environ package loading environment variables
+SECRET_KEY = env('SECRET_KEY')
+DEBUG = env('DEBUG')
+DATABASE = env.db()
+CACHE = env.cache()
+ALLOWED_HOSTS = env.list('ALLOWED_HOSTS')

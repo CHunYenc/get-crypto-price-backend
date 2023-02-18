@@ -12,12 +12,16 @@
 
 # .env 內容
 
+https://django-environ.readthedocs.io/en/latest/quickstart.html
+
 ```dotenv
 #.env
-DB_NAME=
-DB_USER=
-DB_PASSWORD=
-DB_HOST=
-DB_PORT=
-REDIS_URL=
+DEBUG=True
+SECRET_KEY= ??
+DATABASE_URL= postgresql://??
+CACHE_URL= redis://??
+# single
+ALLOWED_HOSTS=*
+# mutiple
+# ALLOWED_HOSTS=127.0.0.1,192.168.1.1
 ```
