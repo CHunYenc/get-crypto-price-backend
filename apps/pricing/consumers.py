@@ -70,8 +70,14 @@ class RealTimePricingConsumer(AsyncWebsocketConsumer):
                 self.previous_message = current_message
             # get redis data
             current_data = json.loads(
-                cache.get(self.previous_message.exchange)
-            )[self.previous_message.symbol]
+                cache.get(self.previous_message.exchange, {}))
+            if current_data is None or self.previous_message.symbol not in current_data:
+                logging.warning(
+                    f"No data for {self.previous_message.exchange} - {self.previous_message.symbol}")
+                return
+
+            current_data = current_data[self.previous_message.symbol]
+
             # send data
             logging.info(
                 f'Pushed data. Exchange is {self.previous_message.exchange}, Symbol is {self.previous_message.symbol}')
@@ -87,9 +93,10 @@ class RealTimePricingConsumer(AsyncWebsocketConsumer):
                 logging.info(
                     f'Starting. Exchange is {self.previous_message.exchange}, Symbol is {self.previous_message.symbol}')
                 current_data = json.loads(
-                    cache.get(self.previous_message.exchange))[self.previous_message.symbol]
-                if current_data != self.previous_data:
-                    self.previous_data = current_data
+                    cache.get(self.previous_message.exchange, {}))
+                if current_data.get(self.previous_message.symbol) != self.previous_data:
+                    self.previous_data = current_data.get(
+                        self.previous_message.symbol)
                     await self.send(text_data=json.dumps({"type": "symbol_data", "data": self.previous_data}))
                 else:
                     logging.info(
