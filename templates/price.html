@@ -31,8 +31,8 @@ ERROR
     {{ data.percentage }}
   </dd>
   <dt>24h - 目前價格</dt>
+  <!-- prettier-ignore -->
   <dd id="lastPrice">
-    <!-- prettier-ignore -->
     {% if exchange == 'BINANCE' %} 
       {{ data.info.lastPrice }} 
     {% elif exchange == "CRYPTOCOM" %} 
