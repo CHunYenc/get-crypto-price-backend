@@ -17,11 +17,12 @@ from django.conf import settings
 from django.conf.urls.static import static
 from django.contrib import admin
 from django.urls import path, include
-from apps.accounts.views import login_view
+from apps.accounts.views import login_view, logout_view
 
 urlpatterns = [
     path('superadmin/', admin.site.urls),
     path('', include('apps.pricing.urls')),
     path('account/', include('apps.accounts.urls')),
-    path('login/', login_view)
+    path('login/', login_view),
+    path('logout/', logout_view)
 ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

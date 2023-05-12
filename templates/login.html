@@ -1,11 +1,13 @@
 {% extends 'base/layout.html' %}
+{% load static %}
 {# title #}
 {% block title %}
   登入頁面
-{% endblock %}
+{% endblock title %}
 {# style #}
 {% block style %}
   {{ block.super }}
+  <link rel='stylesheet' href={% static 'sign-in.css' %}>
   <style>
     .um-loginbox {
       width: 400px;
@@ -13,30 +15,32 @@
       margin-top: 100px;
     }
   </style>
-{% endblock %}
+{% endblock style %}
 {# content #}
 {% block content %}
   {{ block.super }}
-  <div id="index">
-    <el-main>
-      <el-card class="um-loginbox">
-        <h2>Login</h2>
-        <el-form method="POST" label-position="top" label-width="80px" :model="formLoginInfo">
-          {% csrf_token %}
-          <el-form-item label="使用者帳號">
-            <el-input v-model="formLoginInfo.name" name="username"></el-input>
-          </el-form-item>
-          <el-form-item label="密碼">
-            <el-input v-model="formLoginInfo.password" name="password"></el-input>
-          </el-form-item>
-          <el-form-item>
-            <el-button type="primary" type="submit">送出</el-button>
-          </el-form-item>
-        </el-form>
-      </el-card>
-    </el-main>
-  </div>
-{% endblock %}
+  <main class="form-signin w-100 m-auto">
+    <form method="POST">
+      {% csrf_token %}
+      <h1 class="h3 mb-3 fw-normal">請輸入你的登入資訊</h1>
+
+      <div class="form-floating">
+        <input type="text" class="form-control" id="formUserName" name="username"/>
+        <label for="formUserName">使用者帳號</label>
+      </div>
+      <div class="form-floating">
+        <input type="password" class="form-control" id="formUserPassword" placeholder="Password" name="password"/>
+        <label for="formUserPassword">密碼</label>
+      </div>
+
+      <div class="checkbox mb-3">
+        <input type="checkbox" value="remember-me" />
+        <label>記住我的登入資訊</label>
+      </div>
+      <button class="w-100 btn btn-lg btn-primary" type="submit">進入</button>
+    </form>
+  </main>
+{% endblock content %}
 {# js #}
 {% block js %}
   {{ block.super }}
