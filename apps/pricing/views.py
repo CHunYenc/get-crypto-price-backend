@@ -51,8 +51,8 @@ def get_pricing(request, exchange, symbol_a, symbol_b):
     # 如果沒有漲跌幅度時，提供一個漲跌幅度
     if symbol_data['percentage'] is None:
         symbol_data['percentage'] = float(symbol_data['info']['c']) * 100
-    return render(request, 'price.html', context={"data": symbol_data, "exchange": exchange.upper()})
+    return render(request, 'pricing/price.html', context={"data": symbol_data, "exchange": exchange.upper()})
 
 
 def get_websocket_pricing(request):
-    return render(request, 'price_ws.html')
+    return render(request, 'pricing/price_ws.html')

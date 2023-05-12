@@ -17,6 +17,17 @@
     <el-header>
       {% include 'base/header.html' %}
     </el-header>
+    {% if messages %}
+      {% for message in messages %}
+        <el-alert
+          title="{{ message }}"
+          type="{{ message.tags }}"
+          center
+          show-icon
+          :closable="false"
+        ></el-alert>
+      {% endfor %}
+    {% endif %}
   </div>
 {% endblock %}
 {# javascript #}

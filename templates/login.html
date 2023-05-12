@@ -1,0 +1,59 @@
+{% extends 'base/layout.html' %}
+{# title #}
+{% block title %}
+  登入頁面
+{% endblock %}
+{# style #}
+{% block style %}
+  {{ block.super }}
+  <style>
+    .um-loginbox {
+      width: 400px;
+      margin: 0 auto;
+      margin-top: 100px;
+    }
+  </style>
+{% endblock %}
+{# content #}
+{% block content %}
+  {{ block.super }}
+  <div id="index">
+    <el-main>
+      <el-card class="um-loginbox">
+        <h2>Login</h2>
+        <el-form method="POST" label-position="top" label-width="80px" :model="formLoginInfo">
+          {% csrf_token %}
+          <el-form-item label="使用者帳號">
+            <el-input v-model="formLoginInfo.name" name="username"></el-input>
+          </el-form-item>
+          <el-form-item label="密碼">
+            <el-input v-model="formLoginInfo.password" name="password"></el-input>
+          </el-form-item>
+          <el-form-item>
+            <el-button type="primary" type="submit">送出</el-button>
+          </el-form-item>
+        </el-form>
+      </el-card>
+    </el-main>
+  </div>
+{% endblock %}
+{# js #}
+{% block js %}
+  {{ block.super }}
+  <script>
+    new Vue({
+      el: '#index',
+      delimiters: ['[[', ']]'],
+      data() {
+        return {
+          formLoginInfo: {
+            name: '',
+            password: ''
+          }
+        };
+      },
+      created() {},
+      methods: {}
+    });
+  </script>
+{% endblock %}

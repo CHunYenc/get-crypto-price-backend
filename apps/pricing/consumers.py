@@ -13,12 +13,12 @@ class SymbolData:
 
 
 class RealTimePricingConsumer(AsyncWebsocketConsumer):
-    sent = False
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.previous_message = None
         self.previous_data = None
+        self.sent = False
 
     async def connect(self):
         await self.accept()
@@ -27,7 +27,6 @@ class RealTimePricingConsumer(AsyncWebsocketConsumer):
 
     async def disconnect(self, close_code):
         self.sent = False
-        pass
 
     async def send_exchange_data(self):
         try:

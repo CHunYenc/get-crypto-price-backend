@@ -87,9 +87,8 @@
           this.symbol_data = message.data;
           if (this.select_exchange.includes('BINANCE')) this.current_price = this.symbol_data.info.lastPrice;
           if (this.select_exchange.includes('CRYPTOCOM')) this.current_price = this.symbol_data.info.a;
-          document.title = `${parseFloat(this.current_price).toFixed(6)} | ${
-            this.select_symbol
-          } | ${this.select_exchange.replace('CRYPTO_', '')}`;
+          document.title = `${parseFloat(this.current_price).toFixed(6)} | ${this.select_symbol
+            } | ${this.select_exchange.replace('CRYPTO_', '')}`;
           console.log('get symbol data.');
           this.closeLoading();
         }

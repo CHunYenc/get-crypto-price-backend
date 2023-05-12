@@ -2,4 +2,7 @@
     "python.formatting.provider": "autopep8",
     "python.analysis.typeCheckingMode": "basic",
     "editor.formatOnSave": true,
+    "[python]": {
+        "editor.defaultFormatter": "ms-python.python"
+    },
 }
