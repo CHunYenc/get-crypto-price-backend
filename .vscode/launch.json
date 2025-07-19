@@ -10,7 +10,9 @@
             "request": "launch",
             "program": "${workspaceFolder}/manage.py",
             "args": [
-                "runserver"
+                "runserver",
+                "0.0.0.0:12000",
+                "--settings=config.settings.local"
             ],
             "django": true,
             "justMyCode": true
