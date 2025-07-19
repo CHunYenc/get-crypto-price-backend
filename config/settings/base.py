@@ -326,12 +326,7 @@ CACHES = {
             "CLIENT_CLASS": "django_redis.client.DefaultClient",
             # Mimicing memcache behavior.
             # https://github.com/jazzband/django-redis#memcached-exceptions-behavior
-            "IGNORE_EXCEPTIONS": False,
-            "ssl_cert_reqs": None,
-            "VERSION": None,
-            "CONNECTION_KWARGS": {
-                "health_check_interval": 30
-            }
+            # "IGNORE_EXCEPTIONS": True,
         },
     },
 }
